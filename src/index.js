@@ -12,6 +12,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
     <React.StrictMode>
+      {/* <BrowserRouter basename='/casting_manager'> */}
       <BrowserRouter>
         <App />
       </BrowserRouter>

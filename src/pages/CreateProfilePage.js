@@ -1,19 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  IconButton,
-  Grid,
-  FormControl,
-  FormLabel,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-} from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import DeleteIcon from '@mui/icons-material/Delete';
+import React, { useState } from 'react';
 
 import { formDataFunction } from '../util/formData';
 import { useSelector } from 'react-redux';
@@ -27,6 +12,7 @@ function CreateProfilePage() {
     profile_name: '',
     profile_phone: '',
     profile_email: '',
+    profile_birth: '',
     profile_main_img: null,
     profile_others_img: [],
     profile_youtube_link: '',
@@ -102,12 +88,15 @@ function CreateProfilePage() {
 
 
   const handleAddVideoLink = () => {
-    setProfile({ ...profile, profile_video_link: [...profile.profile_video_link, ''] });
+    setProfile({
+      ...profile,
+      profile_video_link: [...profile.profile_video_link, { title: '', link: '' }],
+    });
   };
 
-  const handleVideoLinkChange = (index, value) => {
+  const handleVideoLinkChange = (index, field, value) => {
     const updatedLinks = [...profile.profile_video_link];
-    updatedLinks[index] = value;
+    updatedLinks[index][field] = value;
     setProfile({ ...profile, profile_video_link: updatedLinks });
   };
 
@@ -142,12 +131,13 @@ function CreateProfilePage() {
     formData.append("profile_name", profile.profile_name);
     formData.append("profile_phone", profile.profile_phone);
     formData.append("profile_email", profile.profile_email);
+    formData.append("profile_birth", profile.profile_birth);
     formData.append("profile_main_img", profile.profile_main_img);
     formData.append("profile_others_img", profile.profile_others_img.join(','));
     formData.append("profile_youtube_link", profile.profile_youtube_link);
     formData.append("profile_instagram_link", profile.profile_instagram_link);
     formData.append("profile_job", profile.profile_job.join(','));
-    formData.append("profile_video_link", profile.profile_video_link.join(','));
+    formData.append("profile_video_link", JSON.stringify(profile.profile_video_link));
     formData.append("profile_body_height", profile.profile_body_height);
     formData.append("profile_body_weight", profile.profile_body_weight);
     formData.append("profile_specialty", profile.profile_specialty);
@@ -168,243 +158,377 @@ function CreateProfilePage() {
   }
 
   return (
-    <Box sx={{ padding: 4, maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
-      <Typography variant="h4" gutterBottom>
-        프로필 만들기
-      </Typography>
+    <div className="max-w-full mx-auto px-6 py-10 bg-gray-900 text-white">
+      <div className='max-w-6xl mx-auto'>
+      <div className="space-y-6">
+          <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">
+            프로필 만들기
+          </h1>
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="이름"
-            name="profile_name"
-            value={profile.profile_name}
-            onChange={handleInputChange}
-          />
-        </Grid>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-2">
+            {/* 이름 */}
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-300">이름</label>
+              <input
+                type="text"
+                name="profile_name"
+                value={profile.profile_name}
+                onChange={handleInputChange}
+                placeholder="이름을 입력하세요"
+                className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
 
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="전화번호"
-            name="profile_phone"
-            value={profile.profile_phone}
-            onChange={handleInputChange}
-            type="number"
-          />
-        </Grid>
+            {/* 전화번호 */}
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-300">전화번호</label>
+              <input
+                type="number"
+                name="profile_phone"
+                value={profile.profile_phone}
+                onChange={handleInputChange}
+                placeholder="전화번호를 입력하세요"
+                className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
 
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="이메일"
-            name="profile_email"
-            value={profile.profile_email}
-            onChange={handleInputChange}
-          />
-        </Grid>
+            {/* 이메일 */}
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-300">이메일</label>
+              <input
+                type="email"
+                name="profile_email"
+                value={profile.profile_email}
+                onChange={handleInputChange}
+                placeholder="이메일을 입력하세요"
+                className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
 
-        <Grid item xs={12}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend">직업 유형</FormLabel>
-            <FormGroup row>
-              {['Actor', 'Model', 'Influencer'].map((job) => (
-                <FormControlLabel
-                  key={job}
-                  control={
-                    <Checkbox
+            {/* 생일 */}
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-300">생년월일</label>
+              <input
+                type="date"
+                name="profile_birth"
+                value={profile.profile_birth}
+                onChange={handleInputChange}
+                placeholder="생년월일을 입력하세요"
+                className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+
+            {/* 인스타그램 링크 */}
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-300">인스타그램 링크</label>
+              <input
+                type="text"
+                name="profile_instagram_link"
+                value={profile.profile_instagram_link}
+                onChange={handleInputChange}
+                placeholder="인스타그램 링크를 입력하세요"
+                className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+
+            {/* 유튜브 링크 */}
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-300">유튜브 채널 링크</label>
+              <input
+                type="text"
+                name="profile_youtube_link"
+                value={profile.profile_youtube_link}
+                onChange={handleInputChange}
+                placeholder="유튜브 링크를 입력하세요"
+                className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-300">
+                직업 유형
+              </label>
+              <div className="flex flex-wrap gap-4">
+                {["Actor", "Model", "Influencer"].map((job) => (
+                  <label key={job} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
                       value={job}
                       checked={profile.profile_job.includes(job)}
                       onChange={handleJobChange}
+                      className="w-4 h-4 text-blue-500 focus:ring-2 focus:ring-blue-400"
                     />
-                  }
-                  label={job}
-                />
-              ))}
-            </FormGroup>
-          </FormControl>
-        </Grid>
+                    <span className="text-sm text-gray-200">{job}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
 
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="키 (cm)"
-            name="profile_body_height"
-            value={profile.profile_body_height}
-            onChange={handleInputChange}
-            type="number"
-          />
-        </Grid>
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-300">
+                키 (cm)
+              </label>
+              <input
+                type="number"
+                name="profile_body_height"
+                value={profile.profile_body_height}
+                onChange={handleInputChange}
+                placeholder="키를 입력하세요"
+                className="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
 
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="몸무게 (kg)"
-            name="profile_body_weight"
-            value={profile.profile_body_weight}
-            onChange={handleInputChange}
-            type="number"
-          />
-        </Grid>
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-300">
+                몸무게 (kg)
+              </label>
+              <input
+                type="number"
+                name="profile_body_weight"
+                value={profile.profile_body_weight}
+                onChange={handleInputChange}
+                placeholder="몸무게를 입력하세요"
+                className="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
 
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="특기"
-            name="profile_specialty"
-            value={profile.profile_specialty}
-            onChange={handleInputChange}
-          />
-        </Grid>
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-300">특기</label>
+              <input
+                type="text"
+                name="profile_specialty"
+                value={profile.profile_specialty}
+                onChange={handleInputChange}
+                placeholder="특기를 입력하세요"
+                className="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
 
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="취미"
-            name="profile_hobby"
-            value={profile.profile_hobby}
-            onChange={handleInputChange}
-          />
-        </Grid>
+            <div>
+              <label className="block mb-2 text-sm font-semibold text-gray-300">취미</label>
+              <input
+                type="text"
+                name="profile_hobby"
+                value={profile.profile_hobby}
+                onChange={handleInputChange}
+                placeholder="취미를 입력하세요"
+                className="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
 
-        <Grid item xs={12}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 2 }}>
-            <Box
-              sx={{
-                width: 200,
-                height: 200,
-                border: '1px dashed gray',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: 2,
-                backgroundImage: mainImgPreview ? `url(${mainImgPreview})` : 'none',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
+
+        <div className="space-y-6 my-10">
+          {/* 메인이미지 추가 */}
+          <div className="flex flex-col items-center space-y-4">
+            <div
+              className={`w-48 h-48 border-2 border-dashed rounded-lg flex items-center justify-center ${
+                mainImgPreview
+                  ? "bg-cover bg-center"
+                  : "border-gray-500 text-gray-400"
+              }`}
+              style={{
+                backgroundImage: mainImgPreview ? `url(${mainImgPreview})` : "none",
               }}
             >
-              {!mainImgPreview && <Typography>메인이미지</Typography>}
-            </Box>
-            <Button variant="contained" component="label">
+              {!mainImgPreview && <span className="text-sm">메인이미지</span>}
+            </div>
+            <label className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all">
               메인이미지 추가
               <input
                 type="file"
                 name="profile_main_img"
                 accept="image/*"
-                hidden
                 onChange={handleFileChange}
+                className="hidden"
               />
-            </Button>
-          </Box>
-        </Grid>
+            </label>
+          </div>
 
-        <Grid item xs={12}>
-          <FormLabel component="legend">이미지 (10개 까지 첨부 가능)</FormLabel>
-          <Grid container spacing={2}>
-            {otherImgPreview.map((img, index) => (
-              <Grid item xs={3} key={index}>
-                <Box
-                  sx={{
-                    width: '100%',
-                    paddingTop: '75%',
-                    position: 'relative',
-                    border: '1px solid gray',
-                    borderRadius: 2,
-                    overflow: 'hidden',
-                    backgroundImage: `url(${img})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
+          {/* 추가 이미지 업로드 */}
+          <div>
+            <label className="block mb-2 text-sm font-semibold text-gray-300">
+              이미지 (최대 10개까지 첨부 가능)
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {otherImgPreview.map((img, index) => (
+                <div
+                  key={index}
+                  className="w-full border rounded-lg relative bg-cover bg-center"
+                  style={{ backgroundImage: `url(${img})` }}
                 >
-                  <IconButton
-                    color="error"
+                  <button
+                    type="button"
                     onClick={() => handleRemoveOtherImage(index)}
-                    sx={{ position: 'absolute', top: 8, right: 8 }}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                   >
-                    <DeleteIcon />
-                  </IconButton>
-                </Box>
-              </Grid>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      className="w-4 h-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+            <label className="inline-block mt-4 cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all">
+              이미지 추가
+              <input
+                type="file"
+                name="profile_others_img"
+                accept="image/*"
+                onChange={handleFileChange}
+                multiple
+                className="hidden"
+              />
+            </label>
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          {/* 영상 링크 및 제목 섹션 */}
+          <div>
+            <label className="block mb-2 text-sm font-semibold text-gray-300">
+              영상 링크와 제목
+            </label>
+            {profile.profile_video_link.map((video, index) => (
+              <div key={index} className="flex items-center gap-4 mb-4">
+                {/* 영상 제목 입력 */}
+                <input
+                  type="text"
+                  placeholder={`영상 제목 ${index + 1}`}
+                  value={video.title}
+                  onChange={(e) => handleVideoLinkChange(index, 'title', e.target.value)}
+                  className="w-1/3 px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                />
+
+                {/* 영상 링크 입력 */}
+                <input
+                  type="text"
+                  placeholder={`영상 링크 ${index + 1}`}
+                  value={video.link}
+                  onChange={(e) => handleVideoLinkChange(index, 'link', e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                />
+
+                {/* 삭제 버튼 */}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveVideoLink(index)}
+                  className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             ))}
-          </Grid>
-          <Button variant="contained" component="label" sx={{ marginTop: 2 }}>
-            이미지
-            <input
-              type="file"
-              name="profile_others_img"
-              accept="image/*"
-              hidden
-              multiple
-              onChange={handleFileChange}
-            />
-          </Button>
-        </Grid>
 
-        <Grid item xs={12}>
-          <FormLabel component="legend">영상 링크</FormLabel>
-          {profile.profile_video_link.map((link, index) => (
-            <Box key={index} display="flex" alignItems="center" mb={2}>
-              <TextField
-                fullWidth
-                value={link}
-                onChange={(e) => handleVideoLinkChange(index, e.target.value)}
-                placeholder={`Video Link ${index + 1}`}
-              />
-              <IconButton color="error" onClick={() => handleRemoveVideoLink(index)}>
-                <DeleteIcon />
-              </IconButton>
-            </Box>
-          ))}
-          <Button
-            startIcon={<AddCircleOutlineIcon />}
-            onClick={handleAddVideoLink}
-            variant="contained"
-            sx={{ marginTop: 2 }}
-          >
-            영상 링크 추가
-          </Button>
-        </Grid>
+            {/* 추가 버튼 */}
+            <button
+              type="button"
+              onClick={handleAddVideoLink}
+              className="flex items-center text-blue-400 hover:underline"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5 mr-2"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              영상 추가
+            </button>
+          </div>
 
-        <Grid item xs={12}>
-          <FormLabel component="legend">경력</FormLabel>
-          {profile.profile_history.map((history, index) => (
-            <Box key={index} display="flex" alignItems="center" mb={2}>
-              <TextField
-                label="Month"
-                value={history.month}
-                onChange={(e) => handleHistoryChange(index, 'month', e.target.value)}
-                sx={{ marginRight: 2 }}
-                type="month"
-              />
-              <TextField
-                label="Description"
-                value={history.text}
-                onChange={(e) => handleHistoryChange(index, 'text', e.target.value)}
-                sx={{ flex: 1 }}
-              />
-              <IconButton color="error" onClick={() => handleRemoveHistory(index)}>
-                <DeleteIcon />
-              </IconButton>
-            </Box>
-          ))}
-          <Button
-            startIcon={<AddCircleOutlineIcon />}
-            onClick={handleAddHistory}
-            variant="contained"
-            sx={{ marginTop: 2 }}
-          >
-            경력 추가
-          </Button>
-        </Grid>
+          {/* 경력 섹션 */}
+          <div>
+            <label className="block mb-2 text-sm font-semibold text-gray-300">경력</label>
+            {profile.profile_history.map((history, index) => (
+              <div key={index} className="flex items-center gap-4 mb-4">
+                <input
+                  type="month"
+                  value={history.month}
+                  onChange={(e) => handleHistoryChange(index, "month", e.target.value)}
+                  className="px-3 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                />
+                <input
+                  type="text"
+                  value={history.text}
+                  onChange={(e) => handleHistoryChange(index, "text", e.target.value)}
+                  placeholder="경력 설명"
+                  className="flex-1 px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveHistory(index)}
+                  className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={handleAddHistory}
+              className="flex items-center text-blue-400 hover:underline"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5 mr-2"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              경력 추가
+            </button>
+          </div>
 
-        <Grid item xs={12}>
-          <Button variant="contained" color="primary" size="large" onClick={InsertProfile}>
-            프로필 생성
-          </Button>
-        </Grid>
-      </Grid>
-    </Box>
+          {/* 프로필 생성 버튼 */}
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={InsertProfile}
+              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg hover:from-blue-600 hover:to-green-600 transition-all"
+            >
+              프로필 생성
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

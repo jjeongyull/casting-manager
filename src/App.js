@@ -18,6 +18,7 @@ import AuditionListPage from './pages/AuditionListPage';
 import MyAuditionListPage from './pages/MyAuditionListPage';
 import WriteAuditionPage from './pages/WriteAuditionPage';
 import AuditionViewPage from './pages/AuditionViewPage';
+import EditAuditionPage from './pages/EditAuditionPage';
 
 // component
 import Header from './components/Header';
@@ -46,7 +47,6 @@ function App() {
     try {
       const cookie = cookiesFunction.getCookie('casting_manager');
       const response = await api({ cmd: 'loginChk', jwt: cookie });
-      console.log(response)
       if (response.status === 200) {
         dispatch(setUserInfo(response.data));
         setMyId(response.data.mem_id);
@@ -123,7 +123,7 @@ function App() {
         <Route path="/actor/:id" element={<ActorProfile/>} />
 
         {/* 로그인 페이지 */}
-        <Route path="/login" element={<LoginPage setLoginState={setLoginState} setMyId={setMyId}/>} />
+        <Route path="/login" element={<LoginPage setLoginState={setLoginState} setMyId={setMyId} setCastingMode={setCastingMode}/>} />
 
         {/* 회원가입 페이지 */}
         <Route path="/sign" element={<SignPage/>} />
@@ -142,6 +142,9 @@ function App() {
 
         {/* 오디션 작성 페이지 */}
         <Route path="/write-audition" element={<WriteAuditionPage/>} />
+
+        {/* 오디션 수정 페이지 */}
+        <Route path="/edit-audition" element={<EditAuditionPage/>} />
 
         {/* 오디션 보기 */}
         <Route path="/audition-view/:id" element={<AuditionViewPage/>} />
