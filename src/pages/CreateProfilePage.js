@@ -3,8 +3,12 @@ import React, { useState } from 'react';
 import { formDataFunction } from '../util/formData';
 import { useSelector } from 'react-redux';
 import { selectUserInfo } from '../features/user/userSlice';
+import { useNavigate } from 'react-router-dom';
+
+import functions from '../util/functions';
 
 function CreateProfilePage() {
+  const navigate = useNavigate();
   const userInfo = useSelector(selectUserInfo);
   
   // 전체 프로필 데이터
@@ -34,12 +38,16 @@ function CreateProfilePage() {
   const [otherImgFiles, setOtherImgFiles] = useState([]);
   const [otherImgPreview, setOtherImgPreview] = useState([]);
 
-  const handleInputChange = (e) => {
+  const inputChange = (e) => {
     const { name, value } = e.target;
-    setProfile({ ...profile, [name]: value });
+    if(name === 'profile_phone'){
+      setProfile({ ...profile, [name]: functions.formatPhoneNumber(value) });
+    }else{
+      setProfile({ ...profile, [name]: value });
+    }
   };
 
-  const handleFileChange = (e) => {
+  const fileChange = (e) => {
     const { name } = e.target;
     const files = e.target.files;
     if (name === 'profile_main_img') {
@@ -62,7 +70,7 @@ function CreateProfilePage() {
   };
 
 
-  const handleJobChange = (e) => {
+  const projectJobChange = (e) => {
     const { value, checked } = e.target;
     setProfile((prevState) => {
       const newJobs = checked
@@ -72,7 +80,7 @@ function CreateProfilePage() {
     });
   };
 
-  const handleRemoveOtherImage = (index) => {
+  const removeOtherImage = (index) => {
     const updatedImages = [...profile.profile_others_img];
     updatedImages.splice(index, 1);
     setProfile({ ...profile, profile_others_img: updatedImages });
@@ -87,39 +95,39 @@ function CreateProfilePage() {
   };
 
 
-  const handleAddVideoLink = () => {
+  const addVideoLink = () => {
     setProfile({
       ...profile,
       profile_video_link: [...profile.profile_video_link, { title: '', link: '' }],
     });
   };
 
-  const handleVideoLinkChange = (index, field, value) => {
+  const videoLinkChange = (index, field, value) => {
     const updatedLinks = [...profile.profile_video_link];
     updatedLinks[index][field] = value;
     setProfile({ ...profile, profile_video_link: updatedLinks });
   };
 
-  const handleRemoveVideoLink = (index) => {
+  const removeVideoLink = (index) => {
     const updatedLinks = [...profile.profile_video_link];
     updatedLinks.splice(index, 1);
     setProfile({ ...profile, profile_video_link: updatedLinks });
   };
 
-  const handleAddHistory = () => {
+  const addHistory = () => {
     setProfile({
       ...profile,
       profile_history: [...profile.profile_history, { month: '', text: '' }],
     });
   };
 
-  const handleHistoryChange = (index, field, value) => {
+  const historyChange = (index, field, value) => {
     const updatedHistory = [...profile.profile_history];
     updatedHistory[index][field] = value;
     setProfile({ ...profile, profile_history: updatedHistory });
   };
 
-  const handleRemoveHistory = (index) => {
+  const removeHistory = (index) => {
     const updatedHistory = [...profile.profile_history];
     updatedHistory.splice(index, 1);
     setProfile({ ...profile, profile_history: updatedHistory });
@@ -153,7 +161,11 @@ function CreateProfilePage() {
     }
 
     const response = await formDataFunction(formData);
-    console.log(response)
+    const {status} = response;
+
+    if(status === 200){
+      navigate(`/actor/${userInfo?.mem_id}`);
+    }
 
   }
 
@@ -173,7 +185,7 @@ function CreateProfilePage() {
                 type="text"
                 name="profile_name"
                 value={profile.profile_name}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 placeholder="이름을 입력하세요"
                 className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
@@ -183,10 +195,10 @@ function CreateProfilePage() {
             <div>
               <label className="block mb-2 text-sm font-semibold text-gray-300">전화번호</label>
               <input
-                type="number"
+                type="text"
                 name="profile_phone"
                 value={profile.profile_phone}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 placeholder="전화번호를 입력하세요"
                 className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
@@ -199,7 +211,7 @@ function CreateProfilePage() {
                 type="email"
                 name="profile_email"
                 value={profile.profile_email}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 placeholder="이메일을 입력하세요"
                 className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
@@ -212,7 +224,7 @@ function CreateProfilePage() {
                 type="date"
                 name="profile_birth"
                 value={profile.profile_birth}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 placeholder="생년월일을 입력하세요"
                 className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
@@ -225,7 +237,7 @@ function CreateProfilePage() {
                 type="text"
                 name="profile_instagram_link"
                 value={profile.profile_instagram_link}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 placeholder="인스타그램 링크를 입력하세요"
                 className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
@@ -238,7 +250,7 @@ function CreateProfilePage() {
                 type="text"
                 name="profile_youtube_link"
                 value={profile.profile_youtube_link}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 placeholder="유튜브 링크를 입력하세요"
                 className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
@@ -255,7 +267,7 @@ function CreateProfilePage() {
                       type="checkbox"
                       value={job}
                       checked={profile.profile_job.includes(job)}
-                      onChange={handleJobChange}
+                      onChange={projectJobChange}
                       className="w-4 h-4 text-blue-500 focus:ring-2 focus:ring-blue-400"
                     />
                     <span className="text-sm text-gray-200">{job}</span>
@@ -272,7 +284,7 @@ function CreateProfilePage() {
                 type="number"
                 name="profile_body_height"
                 value={profile.profile_body_height}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 placeholder="키를 입력하세요"
                 className="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
@@ -286,7 +298,7 @@ function CreateProfilePage() {
                 type="number"
                 name="profile_body_weight"
                 value={profile.profile_body_weight}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 placeholder="몸무게를 입력하세요"
                 className="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
@@ -298,7 +310,7 @@ function CreateProfilePage() {
                 type="text"
                 name="profile_specialty"
                 value={profile.profile_specialty}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 placeholder="특기를 입력하세요"
                 className="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
@@ -310,7 +322,7 @@ function CreateProfilePage() {
                 type="text"
                 name="profile_hobby"
                 value={profile.profile_hobby}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 placeholder="취미를 입력하세요"
                 className="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
@@ -323,15 +335,15 @@ function CreateProfilePage() {
           {/* 메인이미지 추가 */}
           <div className="flex flex-col items-center space-y-4">
             <div
-              className={`w-48 h-48 border-2 border-dashed rounded-lg flex items-center justify-center ${
-                mainImgPreview
-                  ? "bg-cover bg-center"
-                  : "border-gray-500 text-gray-400"
-              }`}
-              style={{
-                backgroundImage: mainImgPreview ? `url(${mainImgPreview})` : "none",
-              }}
+              className="w-48 border-2 border-dashed rounded-lg flex items-center justify-center border-gray-500 text-gray-400"
             >
+              {mainImgPreview && (
+                <img
+                  src={mainImgPreview}
+                  alt="Main Preview"
+                  className="w-40 object-cover rounded-lg shadow-md"
+                />
+              )}
               {!mainImgPreview && <span className="text-sm">메인이미지</span>}
             </div>
             <label className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all">
@@ -340,7 +352,7 @@ function CreateProfilePage() {
                 type="file"
                 name="profile_main_img"
                 accept="image/*"
-                onChange={handleFileChange}
+                onChange={fileChange}
                 className="hidden"
               />
             </label>
@@ -353,32 +365,32 @@ function CreateProfilePage() {
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {otherImgPreview.map((img, index) => (
-                <div
-                  key={index}
-                  className="w-full border rounded-lg relative bg-cover bg-center"
-                  style={{ backgroundImage: `url(${img})` }}
-                >
-                  <button
+                   <div key={index} className="relative group">
+                     <img
+                      src={img}
+                      alt={`Other Preview ${index + 1}`}
+                      className="w-full object-cover rounded-lg shadow-md"
+                    />
+                     <button
                     type="button"
-                    onClick={() => handleRemoveOtherImage(index)}
+                    onClick={() => removeOtherImage(index)}
                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2}
-                      stroke="currentColor"
-                      className="w-4 h-4"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
+                  ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+              </div>
               ))}
             </div>
             <label className="inline-block mt-4 cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all">
@@ -387,7 +399,7 @@ function CreateProfilePage() {
                 type="file"
                 name="profile_others_img"
                 accept="image/*"
-                onChange={handleFileChange}
+                onChange={fileChange}
                 multiple
                 className="hidden"
               />
@@ -408,7 +420,7 @@ function CreateProfilePage() {
                   type="text"
                   placeholder={`영상 제목 ${index + 1}`}
                   value={video.title}
-                  onChange={(e) => handleVideoLinkChange(index, 'title', e.target.value)}
+                  onChange={(e) => videoLinkChange(index, 'title', e.target.value)}
                   className="w-1/3 px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 />
 
@@ -417,14 +429,14 @@ function CreateProfilePage() {
                   type="text"
                   placeholder={`영상 링크 ${index + 1}`}
                   value={video.link}
-                  onChange={(e) => handleVideoLinkChange(index, 'link', e.target.value)}
+                  onChange={(e) => videoLinkChange(index, 'link', e.target.value)}
                   className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 />
 
                 {/* 삭제 버튼 */}
                 <button
                   type="button"
-                  onClick={() => handleRemoveVideoLink(index)}
+                  onClick={() => removeVideoLink(index)}
                   className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all"
                 >
                   <svg
@@ -444,7 +456,7 @@ function CreateProfilePage() {
             {/* 추가 버튼 */}
             <button
               type="button"
-              onClick={handleAddVideoLink}
+              onClick={addVideoLink}
               className="flex items-center text-blue-400 hover:underline"
             >
               <svg
@@ -469,19 +481,19 @@ function CreateProfilePage() {
                 <input
                   type="month"
                   value={history.month}
-                  onChange={(e) => handleHistoryChange(index, "month", e.target.value)}
+                  onChange={(e) => historyChange(index, "month", e.target.value)}
                   className="px-3 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 />
                 <input
                   type="text"
                   value={history.text}
-                  onChange={(e) => handleHistoryChange(index, "text", e.target.value)}
+                  onChange={(e) => historyChange(index, "text", e.target.value)}
                   placeholder="경력 설명"
                   className="flex-1 px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 />
                 <button
                   type="button"
-                  onClick={() => handleRemoveHistory(index)}
+                  onClick={() => removeHistory(index)}
                   className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all"
                 >
                   <svg
@@ -499,7 +511,7 @@ function CreateProfilePage() {
             ))}
             <button
               type="button"
-              onClick={handleAddHistory}
+              onClick={addHistory}
               className="flex items-center text-blue-400 hover:underline"
             >
               <svg

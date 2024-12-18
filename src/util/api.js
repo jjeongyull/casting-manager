@@ -13,7 +13,7 @@ export const api = async (data) => {
       }
     });
 
-    const { cmd, status } = response.data; // 응답에서 cmd와 state 추출
+    const { cmd, status, statusText } = response.data; // 응답에서 cmd와 state 추출
 
     switch (cmd) {
       case "sign_member":
@@ -25,7 +25,7 @@ export const api = async (data) => {
         break;
       case "login":
         if (status !== 200) {
-          alert('로그인 중 오류가 발생하였습니다.');
+          alert(statusText);
         }
         break;
       case "loginChk":

@@ -12,7 +12,7 @@ const Header = ({ loginState, Logout, myId, castingMode }) => {
           className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500 cursor-pointer"
           onClick={() => navigate('/')}
         >
-          Casting Manager
+          CTM
         </div>
 
         {/* 메뉴 */}
@@ -46,7 +46,7 @@ const Header = ({ loginState, Logout, myId, castingMode }) => {
                   onClick={() => navigate(`/actor/${myId}`)}
                   className="text-gray-300 hover:text-white transition duration-300"
                 >
-                  마이페이지
+                  내 프로필
                 </button>
               )}
               <button
@@ -54,6 +54,12 @@ const Header = ({ loginState, Logout, myId, castingMode }) => {
                 className="text-gray-300 hover:text-white transition duration-300"
               >
                 오디션 리스트
+              </button>
+              <button
+                onClick={() => navigate(`/my-page`)}
+                className="text-gray-300 hover:text-white transition duration-300"
+              >
+                내 정보
               </button>
               <button
                 onClick={() => Logout()}

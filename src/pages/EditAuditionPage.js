@@ -9,7 +9,7 @@ function EditAuditionPage() {
   // state로 넘어온 오디션 데이터
   const audition = location.state || {};
 
-  const handleInputChange = (e) => {
+  const checkInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'project_active') {
       setFormData({ ...formData, [name]: value === 'progress' ? 0 : 1 });
@@ -44,13 +44,13 @@ function EditAuditionPage() {
   }, [audition, navigate]);
 
   // 입력값 변경 핸들러
-  const handleChange = (e) => {
+  const InputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   // 수정 API 호출
-  const handleSubmit = async () => {
+  const updateAuditionApi = async () => {
     try {
       const response = await api({
         cmd: 'update_audition',
@@ -88,21 +88,38 @@ function EditAuditionPage() {
               type="text"
               name="project_name"
               value={formData.project_name}
-              onChange={handleChange}
+              onChange={InputChange}
               className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
             />
           </div>
 
           {/* 유형 */}
           <div>
-            <label className="block mb-2 text-sm font-semibold text-gray-300">유형</label>
-            <input
-              type="text"
+            <label className="block text-sm font-semibold mb-2">작품 유형</label>
+            <select
               name="project_type"
               value={formData.project_type}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
+              onChange={InputChange}
+              className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            >
+              <option value={formData.project_type} disabled>
+                {formData.project_type}
+              </option>
+              {[
+                '단편영화',
+                '장편영화',
+                'OTT',
+                '독립영화',
+                '드라마',
+                '웹드라마',
+                '유튜브',
+                '기타',
+              ].map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* 배역 */}
@@ -112,7 +129,7 @@ function EditAuditionPage() {
               type="text"
               name="project_casting"
               value={formData.project_casting}
-              onChange={handleChange}
+              onChange={InputChange}
               className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
             />
           </div>
@@ -124,7 +141,7 @@ function EditAuditionPage() {
               type="text"
               name="project_pay"
               value={formData.project_pay}
-              onChange={handleChange}
+              onChange={InputChange}
               className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
             />
           </div>
@@ -135,7 +152,7 @@ function EditAuditionPage() {
             <textarea
               name="project_info"
               value={formData.project_info}
-              onChange={handleChange}
+              onChange={InputChange}
               rows="5"
               className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
             ></textarea>
@@ -151,7 +168,7 @@ function EditAuditionPage() {
                   name="project_active"
                   value="progress"
                   checked={formData.project_active === 0}
-                  onChange={handleInputChange}
+                  onChange={checkInputChange}
                   className="form-radio text-blue-400 focus:ring-2 focus:ring-blue-400"
                 />
                 <span>진행중</span>
@@ -162,7 +179,7 @@ function EditAuditionPage() {
                   name="project_active"
                   value="closed"
                   checked={formData.project_active === 1}
-                  onChange={handleInputChange}
+                  onChange={checkInputChange}
                   className="form-radio text-blue-400 focus:ring-2 focus:ring-blue-400"
                 />
                 <span>마감</span>
@@ -175,7 +192,7 @@ function EditAuditionPage() {
         {/* 버튼 */}
         <div className="flex justify-end gap-4 mt-6">
           <button
-            onClick={handleSubmit}
+            onClick={updateAuditionApi}
             className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all"
           >
             수정하기

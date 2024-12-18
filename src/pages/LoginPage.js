@@ -19,10 +19,16 @@ const LoginPage = ({ setLoginState, setMyId, setCastingMode }) => {
     mem_password: '',
   });
 
-  const handleChange = (e) => {
+  const InputChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
     setErrors({ ...errors, [name]: '' });
+  };
+
+  const EnterLogin = (e) => {
+    if (e.key === 'Enter') {
+      login();
+    }
   };
 
   const login = async () => {
@@ -70,7 +76,8 @@ const LoginPage = ({ setLoginState, setMyId, setCastingMode }) => {
               type="text"
               name="mem_id"
               value={form.mem_id}
-              onChange={handleChange}
+              onChange={InputChange}
+              onKeyDown={EnterLogin}
               placeholder="ID"
               className="w-full px-4 py-2 rounded-md bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
@@ -83,7 +90,8 @@ const LoginPage = ({ setLoginState, setMyId, setCastingMode }) => {
               type="password"
               name="mem_password"
               value={form.mem_password}
-              onChange={handleChange}
+              onChange={InputChange}
+              onKeyDown={EnterLogin}
               placeholder="Password"
               className="w-full px-4 py-2 rounded-md bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { formDataFunction } from '../util/formData';
+import functions from '../util/functions';
 
 function EditProfilePage() {
-  const {id} = useParams('id');
   const location = useLocation();
   const navigate = useNavigate();
   const { profile } = location.state || {};
@@ -76,35 +76,47 @@ function EditProfilePage() {
     }
   }, [profile]);
 
-  const handleInputChange = (e) => {
+  const inputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if(name === 'profile_phone'){
+      setFormData({ ...formData, [name]: functions.formatPhoneNumber(value) });
+    }else{
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
-  const handleMainImgChange = (e) => {
+  const mainImgChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setMainImgFile(file);
       setMainImgPreview(URL.createObjectURL(file));
+      setFormData({ ...formData, ['profile_main_img']: file.name });
     }
   };
 
-  const handleOtherImgChange = (e) => {
+  const otherImgChange = (e) => {
     const files = Array.from(e.target.files);
     setOtherImgFiles([...otherImgFiles, ...files]);
     setOtherImgPreviews([...otherImgPreviews, ...files.map(file => URL.createObjectURL(file))]);
+    const updateList = [...formData.profile_others_img];
+    updateList.push(files[0].name)
+    setFormData({ ...formData, ['profile_others_img']: updateList });
   };
 
-  const handleRemoveOtherImage = (index) => {
+  const removeOtherImage = (index, text) => {
     const updatedFiles = [...otherImgFiles];
     const updatedPreviews = [...otherImgPreviews];
     updatedFiles.splice(index, 1);
     updatedPreviews.splice(index, 1);
     setOtherImgFiles(updatedFiles);
     setOtherImgPreviews(updatedPreviews);
+    const updateList = formData.profile_others_img.filter((items) => {
+      return String(items) !== String(text);
+    });
+    setFormData({ ...formData, ['profile_others_img']: updateList });
   };
 
-  const handleJobChange = (job) => {
+  const jobChange = (job) => {
     setFormData((prev) => {
       const isSelected = prev.profile_job.includes(job);
       const updatedJobs = isSelected
@@ -114,45 +126,45 @@ function EditProfilePage() {
     });
   };
 
-  const handleVideoChange = (index, value) => {
+  const videoChange = (index, field, value) => {
     const updatedVideos = [...formData.profile_video_link];
-    updatedVideos[index] = value;
+    updatedVideos[index][field] = value;
     setFormData({ ...formData, profile_video_link: updatedVideos });
   };
 
-  const handleAddVideo = () => {
+  const addVideo = () => {
     setFormData({
       ...formData,
       profile_video_link: [...formData.profile_video_link, { title: '', link: '' }],
     });
   };
 
-  const handleRemoveVideo = (index) => {
+  const removeVideo = (index) => {
     const updatedVideos = [...formData.profile_video_link];
     updatedVideos.splice(index, 1);
     setFormData({ ...formData, profile_video_link: updatedVideos });
   };
 
-  const handleHistoryChange = (index, field, value) => {
+  const historyChange = (index, field, value) => {
     const updatedHistory = [...formData.profile_history];
     updatedHistory[index][field] = value;
     setFormData({ ...formData, profile_history: updatedHistory });
   };
 
-  const handleAddHistory = () => {
+  const addHistory = () => {
     setFormData((prev) => ({
       ...prev,
       profile_history: [...prev.profile_history, { month: '', text: '' }],
     }));
   };
 
-  const handleRemoveHistory = (index) => {
+  const removeHistory = (index) => {
     const updatedHistory = [...formData.profile_history];
     updatedHistory.splice(index, 1);
     setFormData({ ...formData, profile_history: updatedHistory });
   };
 
-  const handleSubmit = async () => {
+  const updateProfile = async () => {
     const formDataApi = new FormData();
     formDataApi.append("profile_name", formData.profile_name);
     formDataApi.append("profile_phone", formData.profile_phone);
@@ -203,7 +215,7 @@ function EditProfilePage() {
                 type="text"
                 name="profile_name"
                 value={formData.profile_name}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
             </div>
@@ -215,7 +227,7 @@ function EditProfilePage() {
                 type="text"
                 name="profile_phone"
                 value={formData.profile_phone}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
             </div>
@@ -227,7 +239,7 @@ function EditProfilePage() {
                 type="email"
                 name="profile_email"
                 value={formData.profile_email}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
             </div>
@@ -239,7 +251,7 @@ function EditProfilePage() {
                 type="date"
                 name="profile_birth"
                 value={formData.profile_birth}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
             </div>
@@ -251,7 +263,7 @@ function EditProfilePage() {
                 type="text"
                 name="profile_youtube_link"
                 value={formData.profile_youtube_link}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
             </div>
@@ -263,7 +275,7 @@ function EditProfilePage() {
                 type="text"
                 name="profile_instagram_link"
                 value={formData.profile_instagram_link}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
             </div>
@@ -275,7 +287,7 @@ function EditProfilePage() {
                 type="number"
                 name="profile_body_height"
                 value={formData.profile_body_height}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
             </div>
@@ -285,7 +297,7 @@ function EditProfilePage() {
                 type="number"
                 name="profile_body_weight"
                 value={formData.profile_body_weight}
-                onChange={handleInputChange}
+                onChange={inputChange}
                 className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
             </div>
@@ -308,7 +320,7 @@ function EditProfilePage() {
                 <input
                   type="file"
                   hidden
-                  onChange={handleMainImgChange}
+                  onChange={mainImgChange}
                   accept="image/*"
                 />
               </label>
@@ -328,7 +340,7 @@ function EditProfilePage() {
                   />
                   <button
                     type="button"
-                    onClick={() => handleRemoveOtherImage(index)}
+                    onClick={() => removeOtherImage(index, formData.profile_others_img[index])}
                     className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-all"
                   >
                     &times;
@@ -342,7 +354,7 @@ function EditProfilePage() {
                 type="file"
                 hidden
                 multiple
-                onChange={handleOtherImgChange}
+                onChange={otherImgChange}
                 accept="image/*"
               />
             </label>
@@ -355,7 +367,7 @@ function EditProfilePage() {
               {['Actor', 'Model', 'Influencer'].map((job) => (
                 <span
                   key={job}
-                  onClick={() => handleJobChange(job)}
+                  onClick={() => jobChange(job)}
                   className={`px-4 py-1 rounded-lg text-sm cursor-pointer ${
                     formData.profile_job.includes(job)
                       ? 'bg-blue-500 text-white'
@@ -377,22 +389,22 @@ function EditProfilePage() {
                   type="text"
                   placeholder="영상 제목"
                   value={video.title}
-                  onChange={(e) => handleVideoChange(index, 'title', e.target.value)}
+                  onChange={(e) => videoChange(index, 'title', e.target.value)}
                   className="p-2 w-1/3 bg-gray-800 rounded"
                 />
                 <input
                   type="text"
                   placeholder="영상 링크"
                   value={video.link}
-                  onChange={(e) => handleVideoChange(index, 'link', e.target.value)}
+                  onChange={(e) => videoChange(index, 'link', e.target.value)}
                   className="p-2 w-full bg-gray-800 rounded"
                 />
-                <button onClick={() => handleRemoveVideo(index)} className="text-red-400">
+                <button onClick={() => removeVideo(index)} className="text-red-400">
                 &times;
                 </button>
               </div>
             ))}
-            <button onClick={handleAddVideo} className="text-blue-400 underline">
+            <button onClick={addVideo} className="text-blue-400 underline">
               + 영상 추가
             </button>
           </div>
@@ -405,18 +417,18 @@ function EditProfilePage() {
                 <input
                   type="month"
                   value={history.month}
-                  onChange={(e) => handleHistoryChange(index, 'month', e.target.value)}
+                  onChange={(e) => historyChange(index, 'month', e.target.value)}
                   className="w-1/4 px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 />
                 <input
                   type="text"
                   value={history.text}
-                  onChange={(e) => handleHistoryChange(index, 'text', e.target.value)}
+                  onChange={(e) => historyChange(index, 'text', e.target.value)}
                   placeholder="Description"
                   className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 />
                 <button
-                  onClick={() => handleRemoveHistory(index)}
+                  onClick={() => removeHistory(index)}
                   className="text-red-500 hover:text-red-600"
                 >
                   &times;
@@ -424,7 +436,7 @@ function EditProfilePage() {
               </div>
             ))}
             <button
-              onClick={handleAddHistory}
+              onClick={addHistory}
               className="text-blue-400 hover:underline"
             >
               + 경력추가
@@ -434,7 +446,7 @@ function EditProfilePage() {
           {/* Save/Cancel Buttons */}
           <div className="mt-8 flex justify-end gap-4">
             <button
-              onClick={handleSubmit}
+              onClick={updateProfile}
               className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all"
             >
               수정하기

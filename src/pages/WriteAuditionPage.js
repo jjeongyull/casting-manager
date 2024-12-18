@@ -17,7 +17,7 @@ const WriteAuditionPage = () => {
     project_active: 0,
   });
 
-  const handleInputChange = (e) => {
+  const inputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'project_active') {
       setFormData({ ...formData, [name]: value === 'progress' ? 0 : 1 });
@@ -85,7 +85,7 @@ const WriteAuditionPage = () => {
               type="text"
               name="project_name"
               value={formData.project_name}
-              onChange={handleInputChange}
+              onChange={inputChange}
               className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               placeholder="작품 명을 입력하세요"
             />
@@ -97,7 +97,7 @@ const WriteAuditionPage = () => {
             <select
               name="project_type"
               value={formData.project_type}
-              onChange={handleInputChange}
+              onChange={inputChange}
               className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
             >
               <option value="" disabled>
@@ -127,7 +127,7 @@ const WriteAuditionPage = () => {
               type="text"
               name="project_casting"
               value={formData.project_casting}
-              onChange={handleInputChange}
+              onChange={inputChange}
               className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               placeholder="배역을 입력하세요"
             />
@@ -140,7 +140,7 @@ const WriteAuditionPage = () => {
               type="text"
               name="project_pay"
               value={formData.project_pay}
-              onChange={handleInputChange}
+              onChange={inputChange}
               className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               placeholder="배역을 입력하세요"
             />
@@ -152,7 +152,7 @@ const WriteAuditionPage = () => {
             <textarea
               name="project_info"
               value={formData.project_info}
-              onChange={handleInputChange}
+              onChange={inputChange}
               rows="5"
               className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               placeholder="세부 내용을 입력하세요"
@@ -169,7 +169,7 @@ const WriteAuditionPage = () => {
                   name="project_active"
                   value="progress"
                   checked={formData.project_active === 0}
-                  onChange={handleInputChange}
+                  onChange={inputChange}
                   className="form-radio text-blue-400 focus:ring-2 focus:ring-blue-400"
                 />
                 <span>진행중</span>
@@ -180,7 +180,7 @@ const WriteAuditionPage = () => {
                   name="project_active"
                   value="closed"
                   checked={formData.project_active === 1}
-                  onChange={handleInputChange}
+                  onChange={inputChange}
                   className="form-radio text-blue-400 focus:ring-2 focus:ring-blue-400"
                 />
                 <span>마감</span>

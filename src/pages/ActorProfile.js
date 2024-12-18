@@ -12,7 +12,7 @@ function ActorProfile() {
 
 
   useEffect(() => {
-    const fetchProfiles = async () => {
+    const loadProfile = async () => {
       try {
         const response = await api({
           cmd: 'load_my_profile',
@@ -33,7 +33,7 @@ function ActorProfile() {
     };
 
     if (id) {
-      fetchProfiles();
+      loadProfile();
     } else {
       setLoading(false);
     }

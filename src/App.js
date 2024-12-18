@@ -19,6 +19,8 @@ import MyAuditionListPage from './pages/MyAuditionListPage';
 import WriteAuditionPage from './pages/WriteAuditionPage';
 import AuditionViewPage from './pages/AuditionViewPage';
 import EditAuditionPage from './pages/EditAuditionPage';
+import MyPage from './pages/MyPage';
+import EditMyInfoPage from './pages/EditMyInfoPage';
 
 // component
 import Header from './components/Header';
@@ -148,6 +150,12 @@ function App() {
 
         {/* 오디션 보기 */}
         <Route path="/audition-view/:id" element={<AuditionViewPage/>} />
+
+        {/* 마이페이지 */}
+        <Route path="/my-page" element={<MyPage Logout={Logout}/>} />
+
+        {/* 마이페이지 수정 */}
+        <Route path="/edit-my" element={<EditMyInfoPage/>} />
 
       </Routes>
 

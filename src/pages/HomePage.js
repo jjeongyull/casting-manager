@@ -31,7 +31,7 @@ const HomePage = () => {
     loadProfileList();
   }, []);
 
-  const handleCategoryChange = (newValue) => {
+  const categoryChange = (newValue) => {
     setCategory(newValue);
     if (newValue === '전체') {
       setFilteredProfiles(profileList);
@@ -50,7 +50,7 @@ const HomePage = () => {
         {/* 헤더 */}
         <div className="text-center py-12">
           <h1 className="text-5xl font-bold mb-4 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
-            Talent DB
+            CTM's Talent DB
           </h1>
           <p className="text-lg text-gray-300">다양한 재능 있는 배우, 모델, 인플루언서를 만나보세요.</p>
         </div>
@@ -60,7 +60,7 @@ const HomePage = () => {
           {categories.map((cat) => (
             <button
               key={cat.items}
-              onClick={() => handleCategoryChange(cat.value)}
+              onClick={() => categoryChange(cat.value)}
               className={`px-6 py-2 mx-2 rounded-full text-sm font-medium transition-all 
                 ${category === cat.value ? 'bg-blue-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
             >

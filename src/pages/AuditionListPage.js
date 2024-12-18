@@ -37,7 +37,7 @@ const AuditionListPage = () => {
     loadAuditions();
   }, []);
 
-  const handleSearch = (e) => {
+  const dataSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
     setFilteredAuditions(
@@ -50,7 +50,7 @@ const AuditionListPage = () => {
     setCurrentPage(1);
   };
 
-  const handleCategoryChange = (newValue) => {
+  const categoryChange = (newValue) => {
     setCategory(newValue);
     if (newValue === '전체') {
       setFilteredAuditions(auditions);
@@ -86,7 +86,7 @@ const AuditionListPage = () => {
           {categories.map((cat) => (
             <button
               key={cat}
-              onClick={() => handleCategoryChange(cat)}
+              onClick={() => categoryChange(cat)}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                 category === cat
                   ? 'bg-blue-500 text-white'
@@ -104,7 +104,7 @@ const AuditionListPage = () => {
             type="text"
             placeholder="검색어를 입력하세요."
             value={searchQuery}
-            onChange={handleSearch}
+            onChange={dataSearch}
             className="w-full md:w-3/4 px-4 py-2 rounded-lg bg-gray-700 text-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none"
           />
           <div className="flex items-center gap-4">
