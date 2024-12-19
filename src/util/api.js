@@ -16,16 +16,9 @@ export const api = async (data) => {
     const { cmd, status, statusText } = response.data; // 응답에서 cmd와 state 추출
 
     switch (cmd) {
-      case "sign_member":
-        if (status === 200) {
-          alert('회원가입이 완료되었습니다.');
-        } else {
-          alert('회원가입 중 오류가 발생하였습니다.');
-        }
-        break;
       case "login":
         if (status !== 200) {
-          alert(statusText);
+          console.log(statusText);
         }
         break;
       case "loginChk":

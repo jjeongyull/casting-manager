@@ -52,7 +52,7 @@ function MyPage({Logout}) {
 
   useEffect(() => {
     if (!userInfo) {
-      alert('사용자 정보가 없습니다.');
+      console.log('사용자 정보가 없습니다.');
       navigate('/');
       return;
     }

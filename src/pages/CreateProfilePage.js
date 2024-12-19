@@ -6,10 +6,18 @@ import { selectUserInfo } from '../features/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 import functions from '../util/functions';
+import Confirm from '../components/ConfirmComponent';
+import AlertComponent from '../components/AlertComponent';
+
 
 function CreateProfilePage() {
   const navigate = useNavigate();
   const userInfo = useSelector(selectUserInfo);
+
+  const [modalMainText, setModalMainText] = useState('');
+  const [modalSubText, setModalSubText] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
   
   // 전체 프로필 데이터
   const [profile, setProfile] = useState({
@@ -40,9 +48,14 @@ function CreateProfilePage() {
 
   const inputChange = (e) => {
     const { name, value } = e.target;
-    if(name === 'profile_phone'){
+  
+    if (name === 'profile_phone') {
       setProfile({ ...profile, [name]: functions.formatPhoneNumber(value) });
-    }else{
+    } else if (!isNaN(value) && name !== 'profile_email') {
+      // 숫자인 경우 양수만 허용
+      setProfile({ ...profile, [name]: functions.allowOnlyPositiveNumbers(value) });
+    } else {
+      // 기타 일반 입력 처리
       setProfile({ ...profile, [name]: value });
     }
   };
@@ -134,7 +147,14 @@ function CreateProfilePage() {
   };
 
   // 프로필 올리기
+  const InsertProfileConfirm = () => {
+    setModalMainText('프로필 생성');
+    setModalSubText('작성하신 정보로 프로필을 생성 하시겠습니까?');
+    setConfirmOpen(true);
+  }
+
   const InsertProfile = async () => {
+    setConfirmOpen(false);
     const formData = new FormData();
     formData.append("profile_name", profile.profile_name);
     formData.append("profile_phone", profile.profile_phone);
@@ -164,13 +184,41 @@ function CreateProfilePage() {
     const {status} = response;
 
     if(status === 200){
-      navigate(`/actor/${userInfo?.mem_id}`);
+      setModalMainText('프로필 등록');
+      setModalSubText('프로필 등록이 완료되었습니다.');
+      setAlertOpen(true);
+      setTimeout(() => {
+        navigate(`/actor/${userInfo?.mem_id}`);
+      }, 1000);
+    }else{
+      setModalMainText('프로필 등록');
+      setModalSubText('프로필 등록 중 오류가 발생하였습니다.');
+      setAlertOpen(true);
     }
 
   }
 
   return (
     <div className="max-w-full mx-auto px-6 py-10 bg-gray-900 text-white">
+      {
+        alertOpen && (
+          <AlertComponent 
+            onClose={() => setAlertOpen(false)}
+            mainText={modalMainText}
+            subText={modalSubText}
+          />
+        )
+      }
+      {
+        confirmOpen && (
+          <Confirm 
+            onConfirm={InsertProfile}
+            onClose={() => setConfirmOpen(false)}
+            mainText={modalMainText}
+            subText={modalSubText}
+          />
+        )
+      }
       <div className='max-w-6xl mx-auto'>
       <div className="space-y-6">
           <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">
@@ -226,6 +274,7 @@ function CreateProfilePage() {
                 value={profile.profile_birth}
                 onChange={inputChange}
                 placeholder="생년월일을 입력하세요"
+                onKeyDown={(e) => e.preventDefault()}
                 className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
             </div>
@@ -480,6 +529,7 @@ function CreateProfilePage() {
               <div key={index} className="flex items-center gap-4 mb-4">
                 <input
                   type="month"
+                  onKeyDown={(e) => e.preventDefault()}
                   value={history.month}
                   onChange={(e) => historyChange(index, "month", e.target.value)}
                   className="px-3 py-2 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-blue-400 focus:outline-none"
@@ -532,7 +582,7 @@ function CreateProfilePage() {
           <div className="flex justify-end">
             <button
               type="button"
-              onClick={InsertProfile}
+              onClick={InsertProfileConfirm}
               className="px-6 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg hover:from-blue-600 hover:to-green-600 transition-all"
             >
               프로필 생성

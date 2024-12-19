@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Confirm from './ConfirmComponent';
 
-const Header = ({ loginState, Logout, myId, castingMode }) => {
+const Header = ({ loginState, myId, castingMode, Logout, setModalOpen, ModalOpen }) => {
   const navigate = useNavigate();
+  const [modalMainText, setModalMainText] = useState('');
+  const [modalSubText, setModalSubText] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const LogoutModalOpen = () => {
+    setModalMainText('로그아웃');
+    setModalSubText('로그아웃 하시겠습니까?');
+    setModalOpen(true);
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
 
   return (
     <header className="w-full bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-md">
@@ -15,8 +29,31 @@ const Header = ({ loginState, Logout, myId, castingMode }) => {
           CTM
         </div>
 
-        {/* 메뉴 */}
-        <div className="flex items-center space-x-4">
+        {/* 햄버거 메뉴 버튼 */}
+        <div className="lg:hidden">
+          <button
+            onClick={toggleMenu}
+            className="text-gray-300 hover:text-white focus:outline-none"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+              stroke="currentColor"
+              className="w-8 h-8"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
+
+        {/* 데스크톱 메뉴 */}
+        <div className="hidden lg:flex space-x-4">
           {loginState !== true ? (
             <>
               <button
@@ -62,7 +99,7 @@ const Header = ({ loginState, Logout, myId, castingMode }) => {
                 내 정보
               </button>
               <button
-                onClick={() => Logout()}
+                onClick={LogoutModalOpen}
                 className="text-red-400 hover:text-red-500 transition duration-300"
               >
                 Logout
@@ -71,6 +108,101 @@ const Header = ({ loginState, Logout, myId, castingMode }) => {
           )}
         </div>
       </nav>
+
+      {/* 모바일 메뉴 */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-90 z-50 flex flex-col items-center justify-center space-y-4 text-center lg:hidden">
+          {loginState !== true ? (
+            <>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  navigate('/login');
+                }}
+                className="text-white text-lg"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  navigate('/sign');
+                }}
+                className="text-white text-lg"
+              >
+                Sign Up
+              </button>
+            </>
+          ) : (
+            <>
+              {castingMode === 1 ? (
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    navigate(`/my-audition/${myId}`);
+                  }}
+                  className="text-white text-lg"
+                >
+                  내 공고보기
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    navigate(`/actor/${myId}`);
+                  }}
+                  className="text-white text-lg"
+                >
+                  내 프로필
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  navigate(`/audition`);
+                }}
+                className="text-white text-lg"
+              >
+                오디션 리스트
+              </button>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  navigate(`/my-page`);
+                }}
+                className="text-white text-lg"
+              >
+                내 정보
+              </button>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  LogoutModalOpen();
+                }}
+                className="text-red-400 text-lg"
+              >
+                Logout
+              </button>
+            </>
+          )}
+          <button
+            onClick={() => setIsMenuOpen(false)}
+            className="text-gray-400 hover:text-white mt-6"
+          >
+            닫기
+          </button>
+        </div>
+      )}
+
+      {/* Confirm Modal */}
+      {ModalOpen && (
+        <Confirm
+          onConfirm={Logout}
+          onClose={() => setModalOpen(false)}
+          mainText={modalMainText}
+          subText={modalSubText}
+        />
+      )}
     </header>
   );
 };

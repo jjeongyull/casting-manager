@@ -3,11 +3,24 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { formDataFunction } from '../util/formData';
 import functions from '../util/functions';
+import Confirm from '../components/ConfirmComponent';
+import AlertComponent from '../components/AlertComponent';
 
 function EditProfilePage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { profile } = location.state || {};
+
+  const [modalMainText, setModalMainText] = useState('');
+  const [modalSubText, setModalSubText] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+
+  const updateProfileConfirm = () => {
+    setModalMainText('프로필 수정');
+    setModalSubText('작성하신 정보로 프로필을 수정 하시겠습니까?');
+    setConfirmOpen(true);
+  }
 
   const [formData, setFormData] = useState({
     profile_name: '',
@@ -78,9 +91,14 @@ function EditProfilePage() {
 
   const inputChange = (e) => {
     const { name, value } = e.target;
-    if(name === 'profile_phone'){
+  
+    if (name === 'profile_phone') {
       setFormData({ ...formData, [name]: functions.formatPhoneNumber(value) });
-    }else{
+    } else if (!isNaN(value) && name !== 'profile_email') {
+      // 숫자인 경우 양수만 허용
+      setFormData({ ...formData, [name]: functions.allowOnlyPositiveNumbers(value) });
+    } else {
+      // 일반 입력 처리
       setFormData({ ...formData, [name]: value });
     }
   };
@@ -165,6 +183,7 @@ function EditProfilePage() {
   };
 
   const updateProfile = async () => {
+    setConfirmOpen(false);
     const formDataApi = new FormData();
     formDataApi.append("profile_name", formData.profile_name);
     formDataApi.append("profile_phone", formData.profile_phone);
@@ -192,15 +211,43 @@ function EditProfilePage() {
     console.log(formDataApi)
     const response = await formDataFunction(formDataApi);
 
+    
     if(response.status === 200){
-      alert('수정이 완료되었습니다.');
-      navigate(`/actor/${profile?.mem_id}`);
+      setModalMainText('프로필 수정');
+      setModalSubText('프로필 수정이 완료되었습니다.');
+      setAlertOpen(true);
+      setTimeout(() => {
+        navigate(`/actor/${profile?.mem_id}`);
+      }, 1000);
+    }else{
+      setModalMainText('프로필 수정');
+      setModalSubText('프로필 수정 중 오류가 발생하였습니다.');
+      setAlertOpen(true);
     }
 
   };
 
   return (
       <div className="max-w-full bg-gray-900 text-white shadow-lg">
+        {
+          alertOpen && (
+            <AlertComponent 
+              onClose={() => setAlertOpen(false)}
+              mainText={modalMainText}
+              subText={modalSubText}
+            />
+          )
+        }
+        {
+          confirmOpen && (
+            <Confirm 
+              onConfirm={updateProfile}
+              onClose={() => setConfirmOpen(false)}
+              mainText={modalMainText}
+              subText={modalSubText}
+            />
+          )
+        }
         <div className="max-w-6xl mx-auto px-6 py-10 bg-gray-900 text-white rounded-lg shadow-lg">
           <h1 className="text-4xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">
             프로필 수정
@@ -251,6 +298,7 @@ function EditProfilePage() {
                 type="date"
                 name="profile_birth"
                 value={formData.profile_birth}
+                onKeyDown={(e) => e.preventDefault()}
                 onChange={inputChange}
                 className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
@@ -417,6 +465,7 @@ function EditProfilePage() {
                 <input
                   type="month"
                   value={history.month}
+                  onKeyDown={(e) => e.preventDefault()}
                   onChange={(e) => historyChange(index, 'month', e.target.value)}
                   className="w-1/4 px-4 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 />
@@ -446,7 +495,7 @@ function EditProfilePage() {
           {/* Save/Cancel Buttons */}
           <div className="mt-8 flex justify-end gap-4">
             <button
-              onClick={updateProfile}
+              onClick={updateProfileConfirm}
               className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all"
             >
               수정하기

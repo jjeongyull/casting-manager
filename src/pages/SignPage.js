@@ -3,9 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../util/api';
 
 import functions from '../util/functions';
+import Confirm from '../components/ConfirmComponent';
+import AlertComponent from '../components/AlertComponent';
 
 function SignPage() {
   const navigate = useNavigate();
+  const [modalMainText, setModalMainText] = useState('');
+  const [modalSubText, setModalSubText] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -15,6 +21,13 @@ function SignPage() {
     confirmPassword: '',
     castingMode: 0,
   });
+
+  const signInCon = (e) => {
+    e.preventDefault();
+    setModalMainText('회원가입');
+    setModalSubText('회원가입을 진행하시겠습니까?');
+    setConfirmOpen(true);
+  }
 
   const inputChange = (e) => {
     const { name, value } = e.target;
@@ -31,37 +44,44 @@ function SignPage() {
     setForm({ ...form, castingMode: e.target.checked ? 1 : 0 });
   };
 
-  const signApi = async (e) => {
-    e.preventDefault();
-
+  const signApi = async () => {
+    setConfirmOpen(false);
     const { name, phone, email, username, password, confirmPassword } = form;
     if (!name.trim()) {
-      alert('이름 입력하세요.');
-      return;
-    }
-    if (!phone.trim()) {
-      alert('비밀번호를 입력하세요.');
-      return;
-    }
-    if (!email.trim()) {
-      alert('이메일을 입력하세요.');
+      setModalSubText('이름 입력하세요.');
+      setAlertOpen(true);
       return;
     }
     if (!username.trim()) {
-      alert('아이디를 입력하세요.');
+      setModalSubText('아이디를 입력하세요.');
+      setAlertOpen(true);
       return;
     }
+    if (!phone.trim()) {
+      setModalSubText('전화번호를 입력하세요.');
+      setAlertOpen(true);
+      return;
+    }
+    if (!email.trim()) {
+      setModalSubText('이메일을 입력하세요.');
+      setAlertOpen(true);
+      return;
+    }
+
     if (!password.trim()) {
-      alert('비밀번호를 입력하세요.');
+      setModalSubText('비밀번호를 입력하세요.');
+      setAlertOpen(true);
       return;
     }
     if (!confirmPassword.trim()) {
-      alert('비밀번호 확인을 입력하세요.');
+      setModalSubText('비밀번호 확인을 입력하세요.');
+      setAlertOpen(true);
       return;
     }
 
     if (form.password !== form.confirmPassword) {
-      alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+      setModalSubText('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+      setAlertOpen(true);
       return;
     }
 
@@ -76,20 +96,44 @@ function SignPage() {
         casting_mode: form.castingMode,
       });
       if (result.status === 200) {
-        navigate('/login');
+        setModalSubText('회원가입이 완료되었습니다.');
+        setAlertOpen(true);
+        setTimeout(() => {
+          navigate('/login');
+        }, 1000);
       }
     } catch (error) {
-      alert('회원가입 에러: ' + error.message);
+      setModalSubText('회원가입 에러: ' + error.message);
+      setAlertOpen(true);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      {
+        alertOpen && (
+          <AlertComponent 
+            onClose={() => setAlertOpen(false)}
+            mainText={modalMainText}
+            subText={modalSubText}
+          />
+        )
+      }
+      {
+        confirmOpen && (
+          <Confirm 
+            onConfirm={signApi}
+            onClose={() => setConfirmOpen(false)}
+            mainText={modalMainText}
+            subText={modalSubText}
+          />
+        )
+      }
       <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h1 className="text-4xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">
           회원가입
         </h1>
-        <form onSubmit={signApi} className="space-y-4">
+        <form onSubmit={signInCon} className="space-y-4">
           {/* 이름 */}
           <div>
             <label className="block mb-1 text-gray-300">이름</label>

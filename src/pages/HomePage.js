@@ -56,12 +56,12 @@ const HomePage = () => {
         </div>
 
         {/* 카테고리 필터 */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-8 flex-wrap gap-2">
           {categories.map((cat) => (
             <button
               key={cat.items}
               onClick={() => categoryChange(cat.value)}
-              className={`px-6 py-2 mx-2 rounded-full text-sm font-medium transition-all 
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all 
                 ${category === cat.value ? 'bg-blue-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
             >
               {cat.items}
@@ -70,7 +70,7 @@ const HomePage = () => {
         </div>
 
         {/* 프로필 카드 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 px-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 px-8 py-8">
           {filteredProfiles.map((profile) => (
             <div
               key={profile.idx}

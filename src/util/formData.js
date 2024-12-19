@@ -12,16 +12,17 @@ export const formDataFunction = async (data) => {
       }
     });
 
-    const { cmd, status } = response.data; // 응답에서 cmd와 state 추출
+    // const { cmd, status } = response.data; 
+    const { cmd } = response.data; // 응답에서 cmd 추출
 
     switch (cmd) {
-      case "insert_profile":
-        if (status === 200) {
-          alert('프로필 동록이 완료되었습니다.');
-        } else {
-          alert('프로필 동록 중 오류가 발생하였습니다.');
-        }
-        break;
+      // case "insert_profile":
+      //   if (status === 200) {
+      //     alert('프로필 동록이 완료되었습니다.');
+      //   } else {
+      //     alert('프로필 동록 중 오류가 발생하였습니다.');
+      //   }
+      //   break;
       default:
         break;
     }

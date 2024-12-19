@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { setUserInfo, clearUserInfo } from './features/user/userSlice';
 import cookiesFunction from './util/cookie';
 import { api } from './util/api';
-import { CircularProgress, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import { CircularProgress, Box} from '@mui/material';
 
 // pages
 import HomePage from './pages/HomePage';
@@ -40,10 +40,10 @@ function App() {
   const navigate = useNavigate();
   const [loginState, setLoginState] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const [myId, setMyId] = useState(null);
   const [castingMode, setCastingMode] = useState(null);
   const dispatch = useDispatch();
+  const [ModalOpen, setModalOpen] = useState(false);
 
   const checkToken = async () => {
     try {
@@ -84,17 +84,10 @@ function App() {
     dispatch(clearUserInfo());
     setLoginState(false);
     setMyId(null);
-    setLogoutDialogOpen(false);
     navigate('/');
+    setModalOpen(false);
   };
 
-  const openLogoutDialog = () => {
-    setLogoutDialogOpen(true);
-  };
-
-  const closeLogoutDialog = () => {
-    setLogoutDialogOpen(false);
-  };
 
   useEffect(() => {
     const jwtFromCookie = cookiesFunction.getCookie('casting_manager');
@@ -117,7 +110,7 @@ function App() {
 
   return (
     <div>
-      <Header loginState={loginState} Logout={openLogoutDialog} myId={myId} castingMode={castingMode}/>
+      <Header loginState={loginState} myId={myId} castingMode={castingMode} Logout={Logout} setModalOpen={setModalOpen} ModalOpen={ModalOpen}/>
       <Routes>
         <Route path="/" element={<HomePage/>} />
 
@@ -159,27 +152,7 @@ function App() {
 
       </Routes>
 
-      <Dialog
-        open={logoutDialogOpen}
-        onClose={closeLogoutDialog}
-        aria-labelledby="logout-dialog-title"
-        aria-describedby="logout-dialog-description"
-      >
-        <DialogTitle id="logout-dialog-title">로그아웃</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="logout-dialog-description">
-            로그아웃 하시겠습니까?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeLogoutDialog} color="primary">
-            취소
-          </Button>
-          <Button onClick={Logout} color="primary" autoFocus>
-            확인
-          </Button>
-        </DialogActions>
-      </Dialog>
+      
     </div>
   );
 }

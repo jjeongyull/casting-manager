@@ -1,13 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../util/api';
+import Confirm from '../components/ConfirmComponent';
+import AlertComponent from '../components/AlertComponent';
 
 function EditAuditionPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [modalMainText, setModalMainText] = useState('');
+  const [modalSubText, setModalSubText] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+
   // state로 넘어온 오디션 데이터
   const audition = location.state || {};
+
+  const updateAuditionCon = () => {
+    setModalMainText('공고 수정');
+    setModalSubText('위 내용으로 공고를 수정겠습니까?');
+    setConfirmOpen(true);
+  }
 
   const checkInputChange = (e) => {
     const { name, value } = e.target;
@@ -29,7 +42,7 @@ function EditAuditionPage() {
 
   useEffect(() => {
     if (!audition) {
-      alert('잘못된 접근입니다.');
+      console.log('잘못된 접근입니다.');
       navigate('/');
       return;
     }
@@ -51,7 +64,34 @@ function EditAuditionPage() {
 
   // 수정 API 호출
   const updateAuditionApi = async () => {
+    setConfirmOpen(false);
     try {
+      const { project_name, project_type, project_pay, project_casting, project_info } = formData;
+      if (!project_name.trim()) {
+        setModalSubText('작품명을 입력하세요.');
+        setAlertOpen(true);
+        return;
+      }
+      if (!project_type) {
+        setModalSubText('작품 유형을 선택하세요.');
+        setAlertOpen(true);
+        return;
+      }
+      if (!project_casting.trim()) {
+        setModalSubText('배역을 입력하세요.');
+        setAlertOpen(true);
+        return;
+      }
+      if (!project_pay.trim()) {
+        setModalSubText('프로젝트 페이를 입력하세요.');
+        setAlertOpen(true);
+        return;
+      }
+      if (!project_info.trim()) {
+        setModalSubText('세부 내용을 입력하세요.');
+        setAlertOpen(true);
+        return;
+      }
       const response = await api({
         cmd: 'update_audition',
         project_name: formData.project_name,
@@ -64,17 +104,40 @@ function EditAuditionPage() {
       });
 
       if (response.status === 200) {
-        alert('오디션 공고가 수정되었습니다.');
-        navigate(`/my-audition/${audition.project_writer_id}`); // 이전 페이지로 이동
+        setModalSubText('공고가 수정되었습니다.');
+        setAlertOpen(true);
+        setTimeout(() => {
+          navigate(`/my-audition/${audition.project_writer_id}`); // 이전 페이지로 이동
+        }, 1000);
       }
     } catch (error) {
       console.error('Failed to update audition:', error);
-      alert('수정에 실패했습니다.');
+      setModalSubText('수정에 실패했습니다.');
+      setAlertOpen(true);
     }
   };
 
   return (
     <div className="max-w-full mx-auto bg-gray-900 text-white min-h-screen">
+      {
+        alertOpen && (
+          <AlertComponent 
+            onClose={() => setAlertOpen(false)}
+            mainText={modalMainText}
+            subText={modalSubText}
+          />
+        )
+      }
+      {
+        confirmOpen && (
+          <Confirm 
+            onConfirm={updateAuditionApi}
+            onClose={() => setConfirmOpen(false)}
+            mainText={modalMainText}
+            subText={modalSubText}
+          />
+        )
+      }
       <div className="max-w-4xl mx-auto p-8 bg-gray-900 text-white rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400 mb-6">
           오디션 공고 수정
@@ -192,7 +255,7 @@ function EditAuditionPage() {
         {/* 버튼 */}
         <div className="flex justify-end gap-4 mt-6">
           <button
-            onClick={updateAuditionApi}
+            onClick={() => updateAuditionCon()}
             className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all"
           >
             수정하기

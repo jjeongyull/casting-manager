@@ -50,4 +50,10 @@ functions.formatCurrency = (amount) => {
   );
 };
 
+// 양수만 입력 가능하게 하는 함수
+functions.allowOnlyPositiveNumbers = (value) => {
+  const onlyNum = value.replace(/[^0-9]/g, ''); // 숫자 외 문자 제거
+  return onlyNum ? String(parseInt(onlyNum, 10)) : '';
+};
+
 export default functions;

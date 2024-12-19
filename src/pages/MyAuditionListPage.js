@@ -85,7 +85,7 @@ function MyAuditionListPage() {
 
   useEffect(() => {
     if (userInfo?.mem_id !== id) {
-      alert('잘못된 접근입니다.');
+      console.log('잘못된 접근입니다.');
       navigate('/');
       return;
     }

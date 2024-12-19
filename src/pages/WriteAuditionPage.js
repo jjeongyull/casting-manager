@@ -3,10 +3,23 @@ import { useSelector } from 'react-redux';
 import { selectUserInfo } from '../features/user/userSlice';
 import { api } from '../util/api';
 import { useNavigate } from 'react-router-dom';
+import Confirm from '../components/ConfirmComponent';
+import AlertComponent from '../components/AlertComponent';
 
 const WriteAuditionPage = () => {
   const navigate = useNavigate();
   const userInfo = useSelector(selectUserInfo);
+
+  const [modalMainText, setModalMainText] = useState('');
+  const [modalSubText, setModalSubText] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+
+  const createAuditionCon = () => {
+    setModalMainText('공고 작성');
+    setModalSubText('위 내용으로 공고를 하시겠습니까?');
+    setConfirmOpen(true);
+  }
 
   const [formData, setFormData] = useState({
     project_name: '',
@@ -27,25 +40,31 @@ const WriteAuditionPage = () => {
   };
 
   const createAudition = async () => {
+    setConfirmOpen(false);
     const { project_name, project_type, project_pay, project_casting, project_info } = formData;
     if (!project_name.trim()) {
-      alert('작품명을 입력하세요.');
+      setModalSubText('작품명을 입력하세요.');
+      setAlertOpen(true);
       return;
     }
     if (!project_type) {
-      alert('작품 유형을 선택하세요.');
+      setModalSubText('작품 유형을 선택하세요.');
+      setAlertOpen(true);
       return;
     }
     if (!project_casting.trim()) {
-      alert('배역을 입력하세요.');
+      setModalSubText('배역을 입력하세요.');
+      setAlertOpen(true);
       return;
     }
     if (!project_pay.trim()) {
-      alert('프로젝트 페이를 입력하세요.');
+      setModalSubText('프로젝트 페이를 입력하세요.');
+      setAlertOpen(true);
       return;
     }
     if (!project_info.trim()) {
-      alert('세부 내용을 입력하세요.');
+      setModalSubText('세부 내용을 입력하세요.');
+      setAlertOpen(true);
       return;
     }
 
@@ -63,13 +82,38 @@ const WriteAuditionPage = () => {
     });
 
     if (response.status === 200) {
-      alert('공고가 등록되었습니다.');
-      navigate('/audition');
+      setModalSubText('공고가 등록되었습니다.');
+      setAlertOpen(true);
+      setTimeout(() => {
+        navigate('/audition');
+      }, 1000);
+    }else{
+      setModalSubText('공고 중 오류가 발생하였습니다.');
+      setAlertOpen(true);
     }
   };
 
   return (
     <div className="max-w-full min-h-screen bg-gray-900 text-white">
+      {
+        alertOpen && (
+          <AlertComponent 
+            onClose={() => setAlertOpen(false)}
+            mainText={modalMainText}
+            subText={modalSubText}
+          />
+        )
+      }
+      {
+        confirmOpen && (
+          <Confirm 
+            onConfirm={createAudition}
+            onClose={() => setConfirmOpen(false)}
+            mainText={modalMainText}
+            subText={modalSubText}
+          />
+        )
+      }
       <div className="max-w-4xl mx-auto px-6 py-12 bg-gray-900 text-white rounded-lg shadow-lg">
         {/* 헤더 */}
         <h1 className="text-4xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">
@@ -191,7 +235,7 @@ const WriteAuditionPage = () => {
           {/* 버튼 */}
           <div className="text-center mt-8">
             <button
-              onClick={createAudition}
+              onClick={() => createAuditionCon()}
               className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-md transition-all"
             >
               글쓰기

@@ -5,9 +5,15 @@ import { api } from '../util/api';
 import cookiesFunction from '../util/cookie';
 import { setUserInfo } from '../features/user/userSlice';
 
+import AlertComponent from '../components/AlertComponent';
+
 const LoginPage = ({ setLoginState, setMyId, setCastingMode }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [modalMainText, setModalMainText] = useState('');
+  const [modalSubText, setModalSubText] = useState('');
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const [form, setForm] = useState({
     mem_id: '',
@@ -32,13 +38,16 @@ const LoginPage = ({ setLoginState, setMyId, setCastingMode }) => {
   };
 
   const login = async () => {
+    setModalMainText('로그인');
     const { mem_id, mem_password } = form;
     if (!mem_id.trim()) {
-      alert('아이디를 입력하세요.');
+      setModalSubText('아이디를 입력하세요.');
+      setAlertOpen(true);
       return;
     }
     if (!mem_password.trim()) {
-      alert('비밀번호를 입력하세요.');
+      setModalSubText('비밀번호를 입력하세요.');
+      setAlertOpen(true);
       return;
     }
 
@@ -63,6 +72,15 @@ const LoginPage = ({ setLoginState, setMyId, setCastingMode }) => {
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      {
+        alertOpen && (
+          <AlertComponent 
+            onClose={() => setAlertOpen(false)}
+            mainText={modalMainText}
+            subText={modalSubText}
+          />
+        )
+      }
       <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h1 className="text-4xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">
           로그인
