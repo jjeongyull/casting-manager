@@ -64,6 +64,10 @@ const LoginPage = ({ setLoginState, setMyId, setCastingMode }) => {
         setMyId(form.mem_id);
         setCastingMode(result.data.casting_mode);
         navigate('/');
+      }else{
+        setModalSubText(result.statusText);
+        setAlertOpen(true);
+        return;
       }
     } catch (error) {
       alert('Login failed: ' + error.message);

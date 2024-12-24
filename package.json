@@ -1,5 +1,6 @@
 {
   "name": "casting-manager",
+  "homepage": "https://addit.menteimo.com/casting_manager",
   "proxy": "https://addit.menteimo.com",
   "version": "0.1.0",
   "private": true,

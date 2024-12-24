@@ -21,6 +21,8 @@ import AuditionViewPage from './pages/AuditionViewPage';
 import EditAuditionPage from './pages/EditAuditionPage';
 import MyPage from './pages/MyPage';
 import EditMyInfoPage from './pages/EditMyInfoPage';
+import ValidataionPage from './pages/ValidataionPage';
+import MyApplyPage from './pages/MyApplyPage';
 
 // component
 import Header from './components/Header';
@@ -149,6 +151,12 @@ function App() {
 
         {/* 마이페이지 수정 */}
         <Route path="/edit-my" element={<EditMyInfoPage/>} />
+
+        {/* 이메일 인증 */}
+        <Route path="/validataion/:id" element={<ValidataionPage/>} />
+
+        {/* 내가 지원한 오디션 목록 */}
+        <Route path="/my-apply" element={<MyApplyPage/>} />
 
       </Routes>
 

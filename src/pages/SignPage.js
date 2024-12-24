@@ -96,7 +96,7 @@ function SignPage() {
         casting_mode: form.castingMode,
       });
       if (result.status === 200) {
-        setModalSubText('회원가입이 완료되었습니다.');
+        setModalSubText('회원가입이 완료되었습니다. 발송된 인증메일로 인증을 진행하세요.');
         setAlertOpen(true);
         setTimeout(() => {
           navigate('/login');

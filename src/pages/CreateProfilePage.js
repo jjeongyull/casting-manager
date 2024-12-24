@@ -195,7 +195,6 @@ function CreateProfilePage() {
       setModalSubText('프로필 등록 중 오류가 발생하였습니다.');
       setAlertOpen(true);
     }
-
   }
 
   return (

@@ -79,13 +79,22 @@ const Header = ({ loginState, myId, castingMode, Logout, setModalOpen, ModalOpen
                   내 공고보기
                 </button>
               ) : (
-                <button
-                  onClick={() => navigate(`/actor/${myId}`)}
+                <>
+                  <button
+                  onClick={() => navigate(`/my-apply`)}
                   className="text-gray-300 hover:text-white transition duration-300"
-                >
-                  내 프로필
-                </button>
+                  >
+                    지원현황
+                  </button>
+                  <button
+                    onClick={() => navigate(`/actor/${myId}`)}
+                    className="text-gray-300 hover:text-white transition duration-300"
+                  >
+                    내 프로필
+                  </button>
+                </>
               )}
+              
               <button
                 onClick={() => navigate(`/audition`)}
                 className="text-gray-300 hover:text-white transition duration-300"
@@ -146,15 +155,26 @@ const Header = ({ loginState, myId, castingMode, Logout, setModalOpen, ModalOpen
                   내 공고보기
                 </button>
               ) : (
-                <button
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    navigate(`/actor/${myId}`);
-                  }}
-                  className="text-white text-lg"
-                >
-                  내 프로필
-                </button>
+                <>
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      navigate(`/my-apply`);
+                    }}
+                    className="text-white text-lg"
+                  >
+                    지원현황
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      navigate(`/actor/${myId}`);
+                    }}
+                    className="text-white text-lg"
+                  >
+                    내 프로필
+                  </button>
+                </>
               )}
               <button
                 onClick={() => {
